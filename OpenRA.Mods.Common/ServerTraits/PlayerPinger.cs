@@ -19,7 +19,7 @@ namespace OpenRA.Mods.Common.Server
 	{
 		int PingInterval = 5000; // Ping every 5 seconds
 		int ConnReportInterval = 20000; // Report every 20 seconds
-		int ConnTimeout = 90000; // Drop unresponsive clients after 90 seconds
+		int ConnTimeout = 60000; // Drop unresponsive clients after 60 seconds
 
 		// TickTimeout is in microseconds
 		public int TickTimeout { get { return PingInterval * 100; } }
@@ -36,20 +36,26 @@ namespace OpenRA.Mods.Common.Server
 				lastPing = Game.RunTime;
 				foreach (var c in server.Conns.ToList())
 				{
-					if ((c.socket != null) && c.TimeSinceLastResponse < ConnTimeout)
+					var client = server.GetClient(c);
+					if (client == null)
+					{
+						server.SendMessage("Client #{0} has been dropped because of a dead connection.".F(c.PlayerIndex));
+						server.DropClient(c, -1);
+						continue;
+					}
+
+					if (c.TimeSinceLastResponse < ConnTimeout)
 					{
 						server.SendOrderTo(c, "Ping", Game.RunTime.ToString());
-						if ((c.socket.Connected) && !c.TimeoutMessageShown && c.TimeSinceLastResponse > PingInterval * 2)
+						if (!c.TimeoutMessageShown && c.TimeSinceLastResponse > PingInterval * 2)
 						{
-							server.SendMessage(server.GetClient(c).Name + " is experiencing connection problems.");
+							server.SendMessage(client.Name + " is experiencing connection problems.");
 							c.TimeoutMessageShown = true;
 						}
 					}
 					else
 					{
-						if (server.GetClient(c).Name != null)
-							server.SendMessage(server.GetClient(c).Name + " has been dropped after timing out.");
-					
+						server.SendMessage(client.Name + " has been dropped after timing out.");
 						server.DropClient(c, -1);
 					}
 				}
