@@ -36,10 +36,10 @@ namespace OpenRA.Mods.Common.Server
 				lastPing = Game.RunTime;
 				foreach (var c in server.Conns.ToList())
 				{
-					if (c.TimeSinceLastResponse < ConnTimeout)
+					if ((c.socket != null) && c.TimeSinceLastResponse < ConnTimeout)
 					{
 						server.SendOrderTo(c, "Ping", Game.RunTime.ToString());
-						if (!c.TimeoutMessageShown && c.TimeSinceLastResponse > PingInterval * 2)
+						if ((c.socket.Connected) && !c.TimeoutMessageShown && c.TimeSinceLastResponse > PingInterval * 2)
 						{
 							server.SendMessage(server.GetClient(c).Name + " is experiencing connection problems.");
 							c.TimeoutMessageShown = true;
@@ -47,7 +47,9 @@ namespace OpenRA.Mods.Common.Server
 					}
 					else
 					{
-						server.SendMessage(server.GetClient(c).Name + " has been dropped after timing out.");
+						if (server.GetClient(c).Name != null)
+							server.SendMessage(server.GetClient(c).Name + " has been dropped after timing out.");
+					
 						server.DropClient(c, -1);
 					}
 				}
