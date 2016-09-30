@@ -815,10 +815,14 @@ namespace OpenRA
 
 		public static void CreateServer(ServerSettings settings)
 		{
-			server = new Server.Server(new IPEndPoint(IPAddress.Any, settings.ListenPort), settings, ModData, false);
+			var listenPort = settings.ListenPort;
+			if (listenPort > ushort.MaxValue)
+				listenPort = 1234;
+
+			server = new Server.Server(new IPEndPoint(IPAddress.Any, listenPort), settings, ModData, false);
 		}
 
-		public static int CreateLocalServer(string map)
+		public static ushort CreateLocalServer(string map)
 		{
 			var settings = new ServerSettings()
 			{

@@ -489,6 +489,11 @@ namespace OpenRA
 			return int.TryParse(s, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out i);
 		}
 
+		public static bool TryParseUShortInvariant(string s, out ushort i)
+		{
+			return ushort.TryParse(s, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out i);
+		}
+
 		public static bool TryParseInt64Invariant(string s, out long i)
 		{
 			return long.TryParse(s, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out i);

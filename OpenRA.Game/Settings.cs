@@ -40,16 +40,16 @@ namespace OpenRA
 		public string Name = "OpenRA Game";
 
 		[Desc("Sets the internal port.")]
-		public int ListenPort = 1234;
+		public ushort ListenPort = 1234;
 
 		[Desc("Sets the port advertised to the master server.")]
-		public int ExternalPort = 1234;
+		public ushort ExternalPort = 1234;
 
 		[Desc("Reports the game to the master server list.")]
 		public bool AdvertiseOnline = true;
 
 		[Desc("Locks the game with a password.")]
-		public string Password = "";
+		public string Password = string.Empty;
 
 		public string MasterServer = "http://master.openra.net/";
 
@@ -332,7 +332,7 @@ namespace OpenRA
 	public class ChatSettings
 	{
 		public string Hostname = "irc.openra.net";
-		public int Port = 6667;
+		public ushort Port = 6667;
 		public string Channel = "lobby";
 		public string Nickname = "Newbie";
 		public string QuitMessage = "Battle control terminated!";
