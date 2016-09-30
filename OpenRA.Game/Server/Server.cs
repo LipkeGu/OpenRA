@@ -398,6 +398,9 @@ namespace OpenRA.Server
 				if (!LobbyInfo.IsSinglePlayer && Map.DefinesUnsafeCustomRules)
 					SendOrderTo(newConn, "Message", "This map contains custom rules. Game experience may change.");
 
+				if (!LobbyInfo.IsSinglePlayer && Map.DefinesUnsafeCustomRules && Map.InvalidCustomRules)
+					SendOrderTo(newConn, "Message", "This map contains invalid custom rules. Default Mod rules will be used for this map.");
+
 				if (!LobbyInfo.GlobalSettings.EnableSingleplayer)
 					SendOrderTo(newConn, "Message", TwoHumansRequiredText);
 				else if (Map.Players.Players.Where(p => p.Value.Playable).All(p => !p.Value.AllowBots))
