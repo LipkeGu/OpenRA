@@ -69,13 +69,17 @@
   <ItemGroup>
     <Compile Include="Activities\VoxelHarvesterDockSequence.cs" />
     <Compile Include="SpriteLoaders\TmpTSLoader.cs" />
+    <Compile Include="Traits\Buildings\EnergyWall.cs" />
     <Compile Include="Traits\Buildings\LowBridge.cs" />
     <Compile Include="Traits\Buildings\TiberianSunRefinery.cs" />
+    <Compile Include="Traits\KilledByEnergyWall.cs" />
+    <Compile Include="Traits\NotifyActorsBelow.cs" />
     <Compile Include="Traits\Render\WithDockingOverlay.cs" />
     <Compile Include="Traits\Render\WithPermanentInjury.cs" />
     <Compile Include="Traits\Render\WithVoxelWalkerBody.cs" />
     <Compile Include="Traits\Render\WithVoxelUnloadBody.cs" />
     <Compile Include="Traits\SupportPowers\AttackOrderPower.cs" />
+    <Compile Include="Traits\SupportPowers\FirestormPower.cs" />
     <Compile Include="UtilityCommands\LegacyTilesetImporter.cs" />
     <Compile Include="Traits\World\TSShroudPalette.cs" />
     <Compile Include="UtilityCommands\ImportTSMapCommand.cs" />

@@ -37,6 +37,12 @@ namespace OpenRA.Mods.Common.Traits.Render
 
 		public readonly bool PauseOnLowPower = false;
 
+		public readonly int MinRandomWaitTicks = 30;
+		public readonly int MaxRandomWaitTicks = 110;
+
+		[Desc("Wait random amount of time between MinRandomWaitTicks and MaxRandomWaitTicks until looping animation.")]
+		public readonly bool RandomizeIntervall = false;
+
 		public override object Create(ActorInitializer init) { return new WithIdleOverlay(init.Self, this); }
 
 		public IEnumerable<IActorPreview> RenderPreviewSprites(ActorPreviewInitializer init, RenderSpritesInfo rs, string image, int facings, PaletteReference p)
@@ -72,14 +78,17 @@ namespace OpenRA.Mods.Common.Traits.Render
 		}
 	}
 
-	public class WithIdleOverlay : UpgradableTrait<WithIdleOverlayInfo>, INotifyDamageStateChanged, INotifyBuildComplete, INotifySold, INotifyTransform
+	public class WithIdleOverlay : UpgradableTrait<WithIdleOverlayInfo>, INotifyDamageStateChanged, INotifyBuildComplete, INotifySold, INotifyTransform, ITick
 	{
 		readonly Animation overlay;
+		readonly WithIdleOverlayInfo info;
 		bool buildComplete;
+		int randomDelay;
 
 		public WithIdleOverlay(Actor self, WithIdleOverlayInfo info)
 			: base(info)
 		{
+			this.info = info;
 			var rs = self.Trait<RenderSprites>();
 			var body = self.Trait<BodyOrientation>();
 
@@ -89,8 +98,10 @@ namespace OpenRA.Mods.Common.Traits.Render
 			if (info.StartSequence != null)
 				overlay.PlayThen(RenderSprites.NormalizeSequence(overlay, self.GetDamageState(), info.StartSequence),
 					() => overlay.PlayRepeating(RenderSprites.NormalizeSequence(overlay, self.GetDamageState(), info.Sequence)));
-			else
+			else if (!info.RandomizeIntervall)
 				overlay.PlayRepeating(RenderSprites.NormalizeSequence(overlay, self.GetDamageState(), info.Sequence));
+			else
+				LoopAnimation(self);
 
 			var anim = new AnimationWithOffset(overlay,
 				() => body.LocalToWorld(info.Offset.Rotate(body.QuantizeOrientation(self, self.Orientation))),
@@ -122,6 +133,24 @@ namespace OpenRA.Mods.Common.Traits.Render
 		public void DamageStateChanged(Actor self, AttackInfo e)
 		{
 			overlay.ReplaceAnim(RenderSprites.NormalizeSequence(overlay, e.DamageState, overlay.CurrentSequence.Name));
+		}
+
+		public void Tick(Actor self)
+		{
+			if (info.RandomizeIntervall)
+			{
+				if (randomDelay >= 0)
+					randomDelay--;
+
+				if (randomDelay == 0)
+					LoopAnimation(self);
+			}
+		}
+
+		void LoopAnimation(Actor self)
+		{
+			overlay.PlayThen(RenderSprites.NormalizeSequence(overlay, self.GetDamageState(), info.Sequence),
+				() => randomDelay = self.World.SharedRandom.Next(Info.MinRandomWaitTicks, Info.MaxRandomWaitTicks));
 		}
 	}
 }

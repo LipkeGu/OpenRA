@@ -565,6 +565,7 @@
 	AttackMove:
 		Voice: Move
 	ActorLostNotification:
+	NotifyActorsBelow:
 	BodyOrientation:
 		QuantizedFacings: 0
 		CameraPitch: 90

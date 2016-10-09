@@ -70,3 +70,12 @@ Veins:
 	Warhead@Effect: CreateEffect
 		Explosions: veins
 		ExplosionPalette: player
+
+Firestorm:
+	ReloadDelay: 16
+	ValidTargets: Ground, Air
+	Warhead@1Dam: SpreadDamage
+		ValidTargets: Ground, Air
+		Spread: 0
+		Damage: 9999
+		DamageTypes: FireDeath

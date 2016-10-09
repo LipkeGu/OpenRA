@@ -417,6 +417,7 @@ icon:
 	ioncannon: ioncicon
 	hunterseeker: detnicon
 	emp: pulsicon
+	firestorm: fstdicon
 
 clustermissile:
 	up: null # TODO
